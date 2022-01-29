@@ -1,6 +1,8 @@
 require 'yaml'
 require 'logger'
 require 'discordrb'
+require 'httparty'
+require 'json'
 
 require_relative 'fiora/logger'
 require_relative 'fiora/commands'
@@ -13,7 +15,7 @@ module Fiora
   logger = FioraLogger.init
   logger.info("Config file loaded")
 
-  BOT = Discordrb::Commands::CommandBot.new token: CONFIG['token'] , prefix: CONFIG['prefix'], name: "Fiora"
+  BOT = Discordrb::Commands::CommandBot.new token: CONFIG['token'] , prefix: CONFIG['prefix'], name: "Fiora", help_command: false
   
   # Add every commands to the bot
   logger.info("Loading commands :")

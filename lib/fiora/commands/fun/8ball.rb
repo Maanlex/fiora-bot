@@ -24,7 +24,8 @@ module Fiora::Commands
         "Very doubtful"]
 
       command(:'8ball') do |event,*text|
-        
+        rng = Random.new
+        event.message.reply!(ANSWERS[rng.rand(20)])
       end
     end
   end
