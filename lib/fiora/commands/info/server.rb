@@ -10,6 +10,7 @@ module Fiora::Commands
           embed.author = {name: author.username, icon_url: author.avatar_url}
           embed.description = "Currently " + server.online_members.size.to_s + " members online"
           embed.thumbnail = {url: server.icon_url}
+          embed.color = Fiora::FioraUtility::dominant_color(server.icon_url)
           embed.title = "Server information | " + server.name
           embed.add_field name: "Owner:", value: server.owner.mention, inline: true
           embed.add_field name: "ID:", value: server.id, inline: true

@@ -16,12 +16,12 @@ module Fiora::Commands
         
         if member != nil
           avatar_url = member.avatar_url
-
           event.send_embed do |embed| 
             embed.author = {name: author.username, icon_url: author.avatar_url}
             embed.title = member.username + "#" + member.discriminator + "'s avatar"
             embed.image = {url: member.avatar_url + "?size=4096"}
             embed.footer = {text: server.name, icon_url: server.icon_url}
+            embed.color = Fiora::FioraUtility::dominant_color(member.avatar_url)
             embed.timestamp = Time.new
           end
         end

@@ -2,6 +2,7 @@ require 'yaml'
 require 'logger'
 require 'discordrb'
 require 'httparty'
+require 'mini_magick'
 require 'json'
 
 require_relative 'fiora/logger'

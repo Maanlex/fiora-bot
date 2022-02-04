@@ -21,6 +21,7 @@ module Fiora::Commands
           event.send_embed do |embed|
             embed.author = { name: author.name, icon_url: author.avatar_url }
             embed.thumbnail = { url: member.avatar_url}
+            embed.color = Fiora::FioraUtility::dominant_color(member.avatar_url)
             embed.title = "User Information | " + member.username + "#" + member.discriminator
             embed.description = "Currently " + member.status.to_s.capitalize
             embed.add_field name: "Nickname:", value: member.display_name, inline: true
