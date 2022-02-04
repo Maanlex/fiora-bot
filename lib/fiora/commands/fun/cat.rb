@@ -7,14 +7,13 @@ module Fiora::Commands
       BASE_URI = 'https://api.thecatapi.com/v1'
       TOKEN = Fiora::CONFIG['cat_api_token']
 
-      nb_pages = 0
-      cur_page = 0
       pages = []
-      message = nil
 
-      command(:cat) do |event, option|
+      command(:cat) do |event, option, nb|
         author = event.author
         server = event.server
+        nb_pages = 0
+        res_hash = {}
 
         embed = Discordrb::Webhooks::Embed.new
         embed.author = Discordrb::Webhooks::EmbedAuthor.new(
@@ -38,46 +37,45 @@ module Fiora::Commands
 
           # List all the breeds with their id
           if option == 'breeds' 
-            list = []
-            fields = []
+            if pages.empty?
+              list = []
+              fields = []
 
-            res = HTTParty.get(BASE_URI + '/breeds', :headers => {"x-api-key" => TOKEN})
-            res_hash = JSON.parse(res.body, symbolize_names: true)
-            res_hash.each do |cat|
-              list << cat[:name] + " (`" + cat[:id] + "`)"
-            end
+              res = HTTParty.get(BASE_URI + '/breeds', :headers => {"x-api-key" => TOKEN})
+              res_hash = JSON.parse(res.body, symbolize_names: true)
+              res_hash.each do |cat|
+                list << cat[:name] + " (`" + cat[:id] + "`)"
+              end
 
-            nb_pages = (list.size / 15.0).ceil
-            nb_pages.times do |i|
-              embedPage = Discordrb::Webhooks::Embed.new
-              embedPage.author = Discordrb::Webhooks::EmbedAuthor.new(
-                name: author.name, 
-                icon_url: author.avatar_url)
-              
-              embedPage.footer = Discordrb::Webhooks::EmbedFooter.new(
-                text: server.name,
-                icon_url: server.icon_url)
-              
-              embedPage.timestamp = Time.new
+              nb_pages = (list.size / 15.0).ceil
+              nb_pages.times do |i|
+                embedPage = Discordrb::Webhooks::Embed.new
+                embedPage.author = Discordrb::Webhooks::EmbedAuthor.new(
+                  name: author.name, 
+                  icon_url: author.avatar_url)
+                
+                embedPage.footer = Discordrb::Webhooks::EmbedFooter.new(
+                  text: "Page " + (i+1).to_s + "/" + nb_pages.to_s,
+                  icon_url: server.icon_url)
+                
+                embedPage.timestamp = Time.new
 
-              str = ""
-              15.times do
-                if !list.empty?
-                  str << list[0] + "\n" 
-                  list.shift
+                lines = ""
+                15.times do
+                  if !list.empty?
+                    lines << list[0] + "\n" 
+                    list.shift
+                  end
                 end
-              end
-              fields[i] = Discordrb::Webhooks::EmbedField.new(name: "List of all the breeds and their id :", value: str, inline: false)
-              embedPage.fields = [fields[i]]
-              pages << embedPage
-            end
 
-            event.send_embed(nil,pages[0]) do |_, view|
-              view.row do |r|
-                r.button(label: 'Previous Page', style: :primary, emoji: '⬅️', custom_id: 'previous_page_cat_button')
-                r.button(label: 'Next Page', style: :primary, emoji: '➡️', custom_id: 'next_page_cat_button')
+                fields[i] = Discordrb::Webhooks::EmbedField.new(name: "List of all the breeds and their id :", value: lines, inline: false)
+                embedPage.fields = [fields[i]]
+                pages << embedPage
               end
             end
+            
+            nb = 1 if nb == nil
+            event.send_embed(nil,pages[nb.to_i-1])
 
           # Cat with a specified breed
           else
@@ -87,32 +85,13 @@ module Fiora::Commands
             if res_hash.class != NilClass
               embed.title = "A " + res_hash[:breeds][0][:name] + " Cat"
               embed.image = Discordrb::Webhooks::EmbedImage.new(url: res_hash[:url])
-              event.send_embed(nil,embed)
+              #event.send_embed(nil,embed)
             else 
               event.respond("Please enter a valid breed id or `f!cat breeds` to list all the breeds available")
             end
           end
         end
-      end
-
-      Fiora::BOT.button(custom_id: 'next_page_cat_button') do |event|
-        cur_page = (cur_page + 1) % nb_pages
-        event.update_message(embeds: [pages[cur_page]]) do |_, view|
-          view.row do |r|
-            r.button(label: 'Previous Page', style: :primary, emoji: '⬅️', custom_id: 'previous_page_cat_button')
-            r.button(label: 'Next Page', style: :primary, emoji: '➡️', custom_id: 'next_page_cat_button')
-          end
-        end
-      end
-
-      Fiora::BOT.button(custom_id: 'previous_page_cat_button') do |event|
-        cur_page = (cur_page - 1) % nb_pages
-        event.update_message(embeds: [pages[cur_page]]) do |_, view|
-          view.row do |r|
-            r.button(label: 'Previous Page', style: :primary, emoji: '⬅️', custom_id: 'previous_page_cat_button')
-            r.button(label: 'Next Page', style: :primary, emoji: '➡️', custom_id: 'next_page_cat_button')
-          end
-        end
+        event.send_embed(nil,embed)
       end
     end
   end
