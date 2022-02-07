@@ -4,6 +4,9 @@ module Fiora::Commands
       extend Discordrb::Commands::CommandContainer
       include HTTParty
 
+      embedDescription = nil
+      embedImage = nil
+
       command(:apod) do |event|
         author = event.author
         server = event.server
@@ -32,20 +35,23 @@ module Fiora::Commands
           end
         end
 
-        event.send_embed(nil,embedDescription) do |_,view|
-          view.row do |r|
-            r.button(label: 'Go Back', style: :primary, custom_id: 'button_see_image')
-          end
-        end
         
       end
 
       Fiora::BOT.button(custom_id: 'button_see_description') do |event|
-        event.update_message(embed: embedDescription)
+        event.update_message(embeds: [embedDescription]) do |_,view|
+          view.row do |r|
+            r.button(label: 'Go Back', style: :primary, custom_id: 'button_see_image')
+          end
+        end
       end
 
       Fiora::BOT.button(custom_id: 'button_see_image') do |event|
-        event.update_message(embed: embedImage)
+        event.update_message(embeds: [embedImage]) do |_,view|
+          view.row do |r|
+            r.button(label: 'See Description', style: :primary, custom_id: 'button_see_description')
+          end
+        end
       end
     end
   end
