@@ -3,10 +3,7 @@ module Fiora::Commands
     module Apod 
       extend Discordrb::Commands::CommandContainer
       include HTTParty
-
-      embedDescription = nil
-      embedImage = nil
-
+      
       command(:apod) do |event|
         author = event.author
         server = event.server
@@ -25,7 +22,7 @@ module Fiora::Commands
         embedDescription.author = Discordrb::Webhooks::EmbedAuthor.new(name: author.name, icon_url: author.avatar_url)
         embedDescription.title = res_hash[:title]
         embedDescription.description = res_hash[:explanation]
-        embedDescription.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: res_hash[:hdurl])
+        embedDescription.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: res_hash[:url])
         embedDescription.footer = Discordrb::Webhooks::EmbedFooter.new(text: server.name, icon_url: server.icon_url)
         embedDescription.timestamp = Time.new
 

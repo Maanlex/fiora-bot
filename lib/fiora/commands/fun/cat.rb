@@ -75,7 +75,7 @@ module Fiora::Commands
             end
             
             nb = 1 if nb == nil
-            event.send_embed(nil,pages[nb.to_i-1])
+            embed = pages[nb.to_i-1]
 
           # Cat with a specified breed
           else

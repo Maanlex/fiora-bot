@@ -15,6 +15,11 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    caldera (0.1.0)
+      event_emitter (~> 0.2.6)
+      logging (~> 2.3)
+      permessage_deflate (~> 0.1.4)
+      websocket-driver (~> 0.7.3)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
@@ -25,14 +30,20 @@ GEM
     httparty (0.20.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
+    little-plugger (1.1.4)
+    logging (2.3.0)
+      little-plugger (~> 1.1)
+      multi_json (~> 1.14)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2022.0105)
     mini_magick (4.11.0)
+    multi_json (1.15.0)
     multi_xml (0.6.0)
     netrc (0.11.0)
     opus-ruby (1.0.1)
       ffi
+    permessage_deflate (0.1.4)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -46,11 +57,15 @@ GEM
     websocket-client-simple (0.5.1)
       event_emitter
       websocket
+    websocket-driver (0.7.5)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.5)
 
 PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  caldera
   discordrb!
   httparty
   mini_magick
